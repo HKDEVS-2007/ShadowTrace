@@ -1,0 +1,316 @@
+# ShadowTrace — Prototype Development Prompt
+
+Act as a senior full-stack developer and cybersecurity UI/UX designer. Build a polished, functional prototype of a cybersecurity project named **ShadowTrace**.
+
+## 1. Project Overview
+
+ShadowTrace is a lightweight security log analysis and suspicious activity detection tool. It helps users analyze CSV log files, identify potentially suspicious events using predefined detection rules, and view the results through a professional security dashboard.
+
+This is a **university semester-1 BS Cyber Security project prototype**. Keep the architecture understandable, lightweight, and easy to explain during a live demonstration.
+
+Build only the following three sections for the initial prototype:
+
+1. Dashboard
+2. Log Analyzer
+3. Threat Detection
+
+Do not implement the complete final-year-style system or unnecessary advanced features.
+
+## 2. Technology Stack
+
+Use only:
+
+- Frontend: HTML5, CSS3, vanilla JavaScript
+- Backend: Python with Flask
+- Database: SQLite
+- Charts: Chart.js
+- CSV processing: Python's built-in `csv` module
+- Icons: Lucide icons or another lightweight icon library
+
+Do not use React, Next.js, Vue, Angular, Tailwind CSS, Electron, or any other frontend framework.
+
+The application must run locally on Windows 11 and work on a typical student computer.
+
+## 3. Professional UI Design
+
+Create a modern, premium cybersecurity interface inspired by professional SOC (Security Operations Center) dashboards.
+
+### Design requirements
+
+- Dark navy/charcoal background
+- Subtle blue and cyan accents
+- Red/orange indicators for suspicious activity
+- Clean cards with rounded corners and subtle borders
+- Professional typography and consistent spacing
+- Responsive sidebar and main content area
+- Smooth but subtle hover effects
+- Clear tables, badges, charts, and loading states
+- Consistent visual design across all pages
+
+Avoid excessive glowing effects, distracting animations, and cluttered layouts.
+
+### Sidebar navigation
+
+Include:
+
+- ShadowTrace logo and application name
+- Dashboard
+- Log Analyzer
+- Threat Detection
+- Settings (visual placeholder only)
+- Prototype version indicator
+
+Only the first three sections need to work. Settings can display a simple “Coming Soon” message.
+
+## 4. Module One — Dashboard
+
+Create a professional dashboard containing:
+
+### Summary cards
+
+- Total Log Events
+- Suspicious Events
+- Critical Alerts
+- Last Analysis Status
+
+The values must update according to the data analyzed in the current session or stored in SQLite.
+
+### Charts
+
+Use Chart.js to display:
+
+- Normal vs. Suspicious Events
+- Events by Severity
+- Event Activity Over Time
+
+Charts must use actual analysis results rather than unrelated hardcoded numbers.
+
+### Recent Activity
+
+Display a table with:
+
+- Timestamp
+- Source IP
+- Event Type
+- Severity
+- Detection Reason
+
+Include a useful empty state before any logs have been analyzed.
+
+### Quick Actions
+
+Provide buttons for:
+
+- Upload and Analyze Logs
+- View Detected Threats
+- Load Sample Dataset
+
+Each button must navigate to or trigger its advertised action.
+
+## 5. Module Two — Log Analyzer
+
+Build a working CSV log analysis module.
+
+### CSV upload
+
+Allow users to upload a CSV file containing security or system log records.
+
+Support these columns where available:
+
+- timestamp
+- source_ip
+- event_type
+- username
+- status
+
+Column names should be case-insensitive. Handle missing optional columns gracefully and validate required information.
+
+Include a downloadable example CSV template and a button to load a built-in sample dataset.
+
+### Analysis workflow
+
+1. User uploads a CSV file or loads sample data.
+2. The application validates the file.
+3. Flask processes the CSV records.
+4. The detection engine analyzes the events.
+5. Results are stored in SQLite.
+6. The dashboard and Threat Detection module refresh with the results.
+
+Display the total records processed, valid records, invalid records, suspicious events, and analysis status.
+
+### Results table
+
+Display:
+
+- Timestamp
+- Source IP
+- Username
+- Event Type
+- Status
+- Severity
+- Detection Reason
+
+Add search, severity filtering, and pagination or a reasonable row limit.
+
+Show understandable error messages for invalid CSV files, empty files, and missing required columns.
+
+Do not execute uploaded file contents. Enforce reasonable file-size limits and validate input.
+
+## 6. Module Three — Threat Detection
+
+Implement simple, transparent, rule-based detection using the uploaded log records.
+
+Create these detection rules:
+
+### Rule 1: Repeated Failed Logins
+
+Detect repeated failed login events from the same source IP.
+
+For the prototype, flag an IP with 5 or more failed login attempts within a reasonable analysis window.
+
+### Rule 2: Suspicious Access Attempts
+
+Detect events such as unauthorized access, access denied, or forbidden access using normalized event types and status values.
+
+### Rule 3: Unusual Login Activity
+
+Flag successful logins that occur after multiple failed login attempts from the same IP in the uploaded dataset.
+
+Do not claim to detect sophisticated attacks, malware, or real-time network intrusions.
+
+### Severity levels
+
+- Critical
+- High
+- Medium
+- Low
+- Informational
+
+Use appropriate severity levels based on the detection rules. Clearly distinguish actual rule matches from ordinary events.
+
+### Threat table
+
+Display:
+
+- Detection ID
+- Timestamp
+- Source IP
+- Rule Triggered
+- Severity
+- Evidence
+- Status
+
+Add severity filters and a search bar.
+
+Allow users to open a finding and view its supporting log records.
+
+Provide a clear explanation of why an event was flagged. Do not label an IP malicious based only on its presence in a log.
+
+## 7. SQLite Database
+
+Use SQLite for local persistent storage.
+
+Create a database automatically on the first run. Suggested tables:
+
+- log_events
+- detections
+- analysis_runs
+
+Use proper primary keys, timestamps, and relationships where appropriate.
+
+Avoid inserting duplicate records when the same dataset is analyzed repeatedly. Implement a clear strategy for identifying an analysis run and associating its events and detections with that run.
+
+Do not require MySQL, SQL Server, a cloud database, or any separate database installation.
+
+## 8. Backend Architecture
+
+Use a clean, beginner-friendly folder structure:
+
+ShadowTrace/
+- app.py
+- database.py
+- detector.py
+- csv_processor.py
+- requirements.txt
+- README.md
+- templates/
+  - index.html
+- static/
+  - css/
+    - style.css
+  - js/
+    - app.js
+- uploads/
+  - .gitkeep
+- instance/
+  - .gitkeep
+
+The application may use a single-page layout with sidebar navigation, provided each section works correctly and the code remains organized.
+
+Use Flask routes or APIs for uploading files, retrieving dashboard statistics, retrieving logs, and retrieving detections.
+
+Keep detection logic separate from UI code.
+
+## 9. Functional Requirements
+
+- Every visible button must work.
+- Navigation must switch between the correct sections.
+- CSV uploads must be processed by the Python backend.
+- Sample data must exercise all three detection rules.
+- Dashboard cards and charts must reflect actual results.
+- Search and filters must work.
+- SQLite data must persist after restarting the application.
+- Show loading, success, empty, and error states.
+- Handle malformed records without crashing the entire application.
+- Never expose server-side stack traces to the UI.
+- Keep uploaded files temporary where possible and delete them after processing when they are no longer needed.
+- Do not include real credentials, personal data, or live attack execution.
+
+## 10. Sample Dataset
+
+Create a small, realistic, entirely fictional sample dataset with approximately 30–50 records.
+
+Include:
+
+- Normal successful logins
+- Failed login attempts
+- At least one IP with five or more failed logins
+- An unauthorized access attempt
+- Multiple failed logins followed by a successful login
+- Different timestamps, usernames, and source IPs
+
+The sample dataset must reliably trigger each implemented detection rule so the prototype can be demonstrated without internet access or external log sources.
+
+Clearly label this as demonstration data.
+
+## 11. Demonstration Workflow
+
+The instructor should be able to:
+
+1. Launch ShadowTrace locally.
+2. See the dashboard and its initial empty state.
+3. Load the built-in sample dataset.
+4. Open Log Analyzer and review the processed events.
+5. Open Threat Detection and inspect flagged events.
+6. Return to the dashboard and see updated statistics and charts.
+7. Restart the application and verify that saved results remain available.
+
+## 12. Development Instructions
+
+Before coding, inspect the existing project folder and preserve any useful existing work.
+
+Then implement the prototype completely. Do not merely generate mockups or pseudocode.
+
+Provide all required source files, database initialization, sample CSV data, and a clear README containing Windows setup instructions.
+
+Use a Python virtual environment and include the required dependencies in requirements.txt.
+
+Ensure the application can be started using a straightforward command such as:
+
+python app.py
+
+Run basic checks, fix errors, and verify the complete demonstration workflow before declaring the prototype ready.
+
+Do not add authentication, machine learning, live network scanning, advanced SIEM integrations, or unnecessary modules at this stage.
+
+**Priority: a polished UI, genuinely working CSV analysis, explainable threat detection, and a reliable live demonstration.**
