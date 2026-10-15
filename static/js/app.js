@@ -657,43 +657,26 @@ function initCyberCanvas() {
 /* ===================== CYBER CURSOR ===================== */
 function initCyberCursor() {
   const cursor = $('cyberCursor');
-  const ring = $('cyberCursorRing');
-  if (!cursor || !ring) return;
-
-  let mouseX = -100;
-  let mouseY = -100;
-  let ringX = -100;
-  let ringY = -100;
+  if (!cursor) return;
 
   window.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
     document.body.classList.add('cursor-active');
-    cursor.style.left = `${mouseX}px`;
-    cursor.style.top = `${mouseY}px`;
+    cursor.style.left = `${e.clientX}px`;
+    cursor.style.top = `${e.clientY}px`;
   });
 
   document.addEventListener('mouseleave', () => {
     document.body.classList.remove('cursor-active');
   });
 
-  function renderRing() {
-    ringX += (mouseX - ringX) * 0.2;
-    ringY += (mouseY - ringY) * 0.2;
-    ring.style.left = `${ringX}px`;
-    ring.style.top = `${ringY}px`;
-    requestAnimationFrame(renderRing);
-  }
-  renderRing();
-
-  const interactiveSelector = 'button, a, input, select, label, .qa, .dropzone, .nav-item, .kpi, .icon-btn, .clickable';
+  const interactiveSelector = 'button, a, input, select, label, textarea, .qa, .dropzone, .nav-item, .kpi, .icon-btn, .clickable, [role="button"]';
   document.addEventListener('mouseover', (e) => {
     if (e.target.closest && e.target.closest(interactiveSelector)) {
       document.body.classList.add('cursor-hover');
     }
   });
   document.addEventListener('mouseout', (e) => {
-    if (e.target.closest && e.target.closest(interactiveSelector)) {
+    if (!e.relatedTarget || !e.relatedTarget.closest || !e.relatedTarget.closest(interactiveSelector)) {
       document.body.classList.remove('cursor-hover');
     }
   });
