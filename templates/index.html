@@ -1,372 +1,430 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ShadowTrace — Security Log Analyzer & Threat Detection</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <!-- FontAwesome / Lucide icons CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ShadowTrace — Security Operations Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="sidebar-brand">
-                <div class="brand-icon">
-                    <i class="fa-solid fa-shield-halved"></i>
-                </div>
-                <div class="brand-text">
-                    <h2>ShadowTrace</h2>
-                    <span>SOC Security Suite</span>
-                </div>
-            </div>
 
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="nav-item active" data-target="dashboard-view">
-                        <a href="#dashboard"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item" data-target="analyzer-view">
-                        <a href="#analyzer"><i class="fa-solid fa-file-csv"></i> Log Analyzer</a>
-                    </li>
-                    <li class="nav-item" data-target="threats-view">
-                        <a href="#threats"><i class="fa-solid fa-triangle-exclamation"></i> Threat Detection</a>
-                    </li>
-                    <li class="nav-item" data-target="settings-view">
-                        <a href="#settings"><i class="fa-solid fa-gear"></i> Settings</a>
-                    </li>
-                </ul>
-            </nav>
+<!-- landing intro overlay -->
+<div class="landing-intro" id="landingIntroOverlay">
+  <div class="landing-video-wrap">
+    <video id="landingVideo" autoplay muted playsinline src="{{ url_for('static', filename='landing video.mp4') }}"></video>
+  </div>
+  <div class="landing-content">
+    <div class="landing-logo-wrap" style="width: 88px; height: 88px; border-radius: 20px; overflow: hidden; box-shadow: 0 0 30px rgba(34,211,238,0.6); border: 2px solid rgba(34,211,238,0.5); margin-bottom: 4px;">
+      <img src="{{ url_for('static', filename='logo.png') }}" alt="ShadowTrace Logo" style="width: 100%; height: 100%; object-fit: cover;" />
+    </div>
+    <div class="landing-badge">
+      <i data-lucide="shield-check" style="width:14px;height:14px;"></i> Security Operations Console
+    </div>
+    <h1 class="team-animation-title">GhosT'ers</h1>
+    <div class="team-subtitle">Elite Cybersecurity & Threat Intelligence</div>
+    <button class="landing-enter-btn" id="landingEnterBtn">
+      <span>Enter Console</span>
+      <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
+    </button>
+    <button class="landing-skip" id="landingSkipBtn">Skip Intro</button>
+  </div>
+</div>
 
-            <div class="sidebar-footer">
-                <div class="version-badge">
-                    <i class="fa-solid fa-circle-nodes"></i> Prototype
-                </div>
-                <div class="soc-status">
-                    <span class="status-dot"></span> SOC Operational
-                </div>
-            </div>
-        </aside>
+<!-- animated background layers -->
+<div class="bg-layer">
+  <canvas id="cyberCanvas" class="cyber-canvas"></canvas>
+  <div class="bg-grid"></div>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+  <div class="bg-scanline"></div>
+</div>
 
-        <!-- Main Content Wrapper -->
-        <main class="main-content">
-            <!-- Top Header Bar -->
-            <header class="top-header">
-                <div class="header-breadcrumb">
-                    <h1><i class="fa-solid fa-shield-virus"></i> <span id="view-title">Dashboard Overview</span></h1>
-                    <p class="subtitle">Monitor security logs, investigate anomalies, and analyze rule-based threats.</p>
-                </div>
-                <div class="header-actions">
-                    <button id="btn-load-sample" class="btn btn-secondary">
-                        <i class="fa-solid fa-bolt"></i> Load Sample Dataset
-                    </button>
-                    <button id="btn-quick-upload" class="btn btn-primary">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload Logs
-                    </button>
-                    <div class="user-avatar" title="Analyst (Global SOC)">
-                        <i class="fa-solid fa-user-shield"></i>
-                    </div>
-                </div>
-            </header>
+<div class="app-shell">
 
-            <!-- Content Views Container -->
-            <div class="views-container">
-
-                <!-- 1. DASHBOARD VIEW -->
-                <section id="dashboard-view" class="view-section active">
-                    <!-- Summary Cards -->
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon blue">
-                                <i class="fa-solid fa-database"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-label">Total Log Events</span>
-                                <h3 id="card-total-events">0</h3>
-                                <span class="stat-trend neutral"><i class="fa-solid fa-clock"></i> Current session</span>
-                            </div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-icon orange">
-                                <i class="fa-solid fa-shield-cat"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-label">Suspicious Events</span>
-                                <h3 id="card-suspicious-events">0</h3>
-                                <span class="stat-trend warning"><i class="fa-solid fa-arrow-trend-up"></i> Flagged by rules</span>
-                            </div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-icon red">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-label">Critical Alerts</span>
-                                <h3 id="card-critical-alerts">0</h3>
-                                <span class="stat-trend danger"><i class="fa-solid fa-fire"></i> High priority</span>
-                            </div>
-                        </div>
-
-                        <div class="stat-card">
-                            <div class="stat-icon green">
-                                <i class="fa-solid fa-square-poll-vertical"></i>
-                            </div>
-                            <div class="stat-info">
-                                <span class="stat-label">Analysis Status</span>
-                                <h3 id="card-last-status" class="status-text">Ready</h3>
-                                <span class="stat-trend success" id="card-filename">No file loaded</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Charts Grid -->
-                    <div class="charts-grid">
-                        <div class="chart-card">
-                            <div class="card-header">
-                                <h3><i class="fa-solid fa-chart-pie"></i> Normal vs. Suspicious Events</h3>
-                            </div>
-                            <div class="chart-body">
-                                <canvas id="chartNormalVsSuspicious"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="chart-card">
-                            <div class="card-header">
-                                <h3><i class="fa-solid fa-chart-bar"></i> Events by Severity</h3>
-                            </div>
-                            <div class="chart-body">
-                                <canvas id="chartSeverity"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="chart-card wide">
-                            <div class="card-header">
-                                <h3><i class="fa-solid fa-chart-line"></i> Event Activity Over Time</h3>
-                            </div>
-                            <div class="chart-body">
-                                <canvas id="chartActivityTime"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Activity Section -->
-                    <div class="section-card">
-                        <div class="card-header flex-between">
-                            <h3><i class="fa-solid fa-list-check"></i> Recent Analyzed Activity</h3>
-                            <button class="btn-text" onclick="switchView('analyzer-view')">View All Logs <i class="fa-solid fa-arrow-right"></i></button>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="data-table" id="recent-activity-table">
-                                <thead>
-                                    <tr>
-                                        <th>Timestamp</th>
-                                        <th>Source IP</th>
-                                        <th>Event Type</th>
-                                        <th>Severity</th>
-                                        <th>Detection Reason</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="empty-row">
-                                        <td colspan="5">
-                                            <div class="empty-state">
-                                                <i class="fa-solid fa-folder-open"></i>
-                                                <p>No log records analyzed yet. Load the sample dataset or upload a CSV file to begin.</p>
-                                                <button class="btn btn-primary btn-sm" onclick="loadSampleDataset()">Load Sample Dataset</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 2. LOG ANALYZER VIEW -->
-                <section id="analyzer-view" class="view-section">
-                    <div class="action-bar-card">
-                        <div class="upload-zone" id="drop-zone">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
-                            <div class="upload-text">
-                                <h4>Drag & Drop your CSV security log file here</h4>
-                                <p>Supports .csv files with columns: timestamp, source_ip, event_type, username, status</p>
-                            </div>
-                            <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
-                            <button class="btn btn-primary" onclick="document.getElementById('csv-file-input').click()">Browse File</button>
-                        </div>
-                        <div class="quick-actions-row">
-                            <button class="btn btn-secondary" onclick="loadSampleDataset()">
-                                <i class="fa-solid fa-bolt"></i> Load Built-in Sample Dataset
-                            </button>
-                            <a href="/api/download-template" class="btn btn-outline">
-                                <i class="fa-solid fa-download"></i> Download CSV Template
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Filter & Search Toolbar -->
-                    <div class="toolbar-card">
-                        <div class="search-box">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="log-search" placeholder="Search IP, event type, username..." oninput="debounceFetchLogs()">
-                        </div>
-                        <div class="filter-group">
-                            <label>Severity:</label>
-                            <select id="log-severity-filter" onchange="fetchLogs()">
-                                <option value="All">All Severities</option>
-                                <option value="Critical">Critical</option>
-                                <option value="High">High</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Low">Low</option>
-                            </select>
-                        </div>
-                        <div class="results-counter">
-                            Showing <span id="log-count-display">0</span> records
-                        </div>
-                    </div>
-
-                    <!-- Logs Table -->
-                    <div class="section-card">
-                        <div class="table-responsive">
-                            <table class="data-table" id="logs-table">
-                                <thead>
-                                    <tr>
-                                        <th>Timestamp</th>
-                                        <th>Source IP</th>
-                                        <th>Username</th>
-                                        <th>Event Type</th>
-                                        <th>Status</th>
-                                        <th>Severity</th>
-                                        <th>Detection Reason</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="empty-row">
-                                        <td colspan="7">
-                                            <div class="empty-state">
-                                                <i class="fa-solid fa-database"></i>
-                                                <p>No log records available. Upload a CSV or load sample data.</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 3. THREAT DETECTION VIEW -->
-                <section id="threats-view" class="view-section">
-                    <div class="threat-rules-banner">
-                        <div class="rule-badge-card">
-                            <span class="rule-num">Rule 1</span>
-                            <h4>Repeated Failed Logins</h4>
-                            <p>Flags IPs with 5+ failed login attempts.</p>
-                        </div>
-                        <div class="rule-badge-card">
-                            <span class="rule-num">Rule 2</span>
-                            <h4>Suspicious Access</h4>
-                            <p>Detects unauthorized/forbidden access events.</p>
-                        </div>
-                        <div class="rule-badge-card">
-                            <span class="rule-num">Rule 3</span>
-                            <h4>Unusual Login Activity</h4>
-                            <p>Successful login after multiple failures.</p>
-                        </div>
-                    </div>
-
-                    <div class="toolbar-card">
-                        <div class="search-box">
-                            <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" id="threat-search" placeholder="Search threats by IP, rule, evidence..." oninput="fetchThreats()">
-                        </div>
-                        <div class="filter-group">
-                            <label>Severity:</label>
-                            <select id="threat-severity-filter" onchange="fetchThreats()">
-                                <option value="All">All Severities</option>
-                                <option value="Critical">Critical</option>
-                                <option value="High">High</option>
-                                <option value="Medium">Medium</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="section-card">
-                        <div class="table-responsive">
-                            <table class="data-table" id="threats-table">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Timestamp</th>
-                                        <th>Source IP</th>
-                                        <th>Rule Triggered</th>
-                                        <th>Severity</th>
-                                        <th>Evidence & Explanation</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="empty-row">
-                                        <td colspan="8">
-                                            <div class="empty-state">
-                                                <i class="fa-solid fa-shield-check"></i>
-                                                <p>No active threats detected. Analyze logs to evaluate detection rules.</p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 4. SETTINGS VIEW -->
-                <section id="settings-view" class="view-section">
-                    <div class="settings-card">
-                        <div class="coming-soon-box">
-                            <i class="fa-solid fa-screwdriver-wrench"></i>
-                            <h2>Settings — Coming Soon</h2>
-                            <p>Configure detection rule thresholds, SIEM integrations, and user permissions in future university prototype releases.</p>
-                        </div>
-                    </div>
-                </section>
-
-            </div>
-        </main>
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark" style="background: none; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(34,211,238,0.4);">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;" />
+      </div>
+      <div class="brand-text">
+        <div class="brand-name">Shadow<span>Trace</span></div>
+        <div class="brand-sub">Security Console</div>
+      </div>
     </div>
 
-    <!-- Upload Modal / Toast notification container -->
-    <div id="notification-toast" class="toast hidden">
-        <i class="fa-solid fa-circle-check" id="toast-icon"></i>
-        <span id="toast-message">Notification message</span>
-    </div>
+    <nav class="nav">
+      <div class="nav-label">Operations</div>
+      <button class="nav-item active" data-view="dashboard">
+        <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
+        <span class="nav-glow"></span>
+      </button>
+      <button class="nav-item" data-view="analyzer">
+        <i data-lucide="file-search"></i><span>Log Analyzer</span>
+        <span class="nav-glow"></span>
+      </button>
+      <button class="nav-item" data-view="threats">
+        <i data-lucide="shield-alert"></i><span>Threat Detection</span>
+        <span class="badge-nav" id="navThreatBadge">0</span>
+        <span class="nav-glow"></span>
+      </button>
 
-    <!-- Threat Detail Modal -->
-    <div id="threat-modal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-triangle-exclamation"></i> Threat Finding Details</h3>
-                <button class="btn-close" onclick="closeThreatModal()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body" id="threat-modal-body">
-                <!-- Populated dynamically -->
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeThreatModal()">Close</button>
-            </div>
+      <div class="nav-label" style="margin-top:22px;">System</div>
+      <button class="nav-item" data-view="settings">
+        <i data-lucide="settings-2"></i><span>Settings</span>
+        <span class="nav-glow"></span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        <span id="engineStatus">Engine Idle</span>
+      </div>
+      <div class="version">v0.1 · Prototype</div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+
+    <!-- topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="crumb">
+          <span class="crumb-root">ShadowTrace</span>
+          <i data-lucide="chevron-right"></i>
+          <span class="crumb-current" id="crumbCurrent">Dashboard</span>
         </div>
-    </div>
+        <h1 class="page-title" id="pageTitle">Security Overview</h1>
+      </div>
+      <div class="topbar-right">
+        <div class="pill-select">
+          <i data-lucide="activity"></i>
+          <span id="lastRunLabel">No analysis yet</span>
+        </div>
+        <button class="icon-btn" id="refreshBtn" title="Refresh">
+          <i data-lucide="refresh-cw"></i>
+        </button>
+        <div class="avatar" style="overflow: hidden; padding: 0;">
+          <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;" />
+        </div>
+      </div>
+    </header>
 
-    <!-- Custom JS -->
-    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <!-- ================= DASHBOARD ================= -->
+    <section class="view active" id="view-dashboard">
+
+      <div class="kpi-grid">
+        <div class="kpi tilt" data-accent="cyan">
+          <div class="kpi-inner">
+            <div class="kpi-head">
+              <span class="kpi-label">Total Log Events</span>
+              <div class="kpi-icon"><i data-lucide="database"></i></div>
+            </div>
+            <div class="kpi-value" id="kpiTotal">0</div>
+            <div class="kpi-foot"><span class="kpi-trend up"><i data-lucide="arrow-up-right"></i>live</span> from last run</div>
+          </div>
+          <div class="kpi-glow"></div>
+        </div>
+
+        <div class="kpi tilt" data-accent="amber">
+          <div class="kpi-inner">
+            <div class="kpi-head">
+              <span class="kpi-label">Suspicious Events</span>
+              <div class="kpi-icon"><i data-lucide="alert-triangle"></i></div>
+            </div>
+            <div class="kpi-value" id="kpiSuspicious">0</div>
+            <div class="kpi-foot">Medium / High / Critical</div>
+          </div>
+          <div class="kpi-glow"></div>
+        </div>
+
+        <div class="kpi tilt" data-accent="rose">
+          <div class="kpi-inner">
+            <div class="kpi-head">
+              <span class="kpi-label">Critical Alerts</span>
+              <div class="kpi-icon pulse-ring"><i data-lucide="siren"></i></div>
+            </div>
+            <div class="kpi-value" id="kpiCritical">0</div>
+            <div class="kpi-foot">Requires immediate review</div>
+          </div>
+          <div class="kpi-glow"></div>
+        </div>
+
+        <div class="kpi tilt" data-accent="emerald">
+          <div class="kpi-inner">
+            <div class="kpi-head">
+              <span class="kpi-label">Last Analysis</span>
+              <div class="kpi-icon"><i data-lucide="check-circle-2"></i></div>
+            </div>
+            <div class="kpi-value small" id="kpiStatus">Idle</div>
+            <div class="kpi-foot" id="kpiFilename">No dataset loaded</div>
+          </div>
+          <div class="kpi-glow"></div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h3>Event Classification</h3>
+              <p class="card-sub">Normal vs. suspicious distribution</p>
+            </div>
+            <div class="card-chip cyan">Realtime</div>
+          </div>
+          <div class="chart-wrap"><canvas id="chartNormalVsSuspicious"></canvas></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h3>Severity Breakdown</h3>
+              <p class="card-sub">Events grouped by severity level</p>
+            </div>
+            <div class="card-chip violet">Rules Engine</div>
+          </div>
+          <div class="chart-wrap"><canvas id="chartSeverity"></canvas></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3>Event Activity Timeline</h3>
+            <p class="card-sub">Events over time from the current analysis run</p>
+          </div>
+          <div class="card-chip emerald">Timeline</div>
+        </div>
+        <div class="chart-wrap tall"><canvas id="chartTimeline"></canvas></div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h3>Recent Activity</h3>
+              <p class="card-sub">Latest 10 log events</p>
+            </div>
+            <i data-lucide="activity" class="card-head-icon"></i>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table compact">
+              <thead>
+                <tr>
+                  <th>Timestamp</th><th>Source IP</th><th>Event</th><th>Severity</th><th>Reason</th>
+                </tr>
+              </thead>
+              <tbody id="recentBody">
+                <tr class="empty-row"><td colspan="5">No events analyzed yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h3>Quick Actions</h3>
+              <p class="card-sub">Common operations</p>
+            </div>
+          </div>
+          <div class="quick-actions">
+            <button class="qa" id="qaUpload">
+              <div class="qa-icon cyan"><i data-lucide="upload-cloud"></i></div>
+              <div class="qa-text"><strong>Upload & Analyze</strong><span>Import a CSV log file</span></div>
+              <i data-lucide="arrow-right" class="qa-arrow"></i>
+            </button>
+            <button class="qa" id="qaSample">
+              <div class="qa-icon violet"><i data-lucide="flask-conical"></i></div>
+              <div class="qa-text"><strong>Load Sample Dataset</strong><span>Demo data covering all 3 rules</span></div>
+              <i data-lucide="arrow-right" class="qa-arrow"></i>
+            </button>
+            <button class="qa" id="qaThreats">
+              <div class="qa-icon rose"><i data-lucide="shield-alert"></i></div>
+              <div class="qa-text"><strong>View Detected Threats</strong><span>Inspect flagged events</span></div>
+              <i data-lucide="arrow-right" class="qa-arrow"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ANALYZER ================= -->
+    <section class="view" id="view-analyzer">
+      <div class="grid-analyzer">
+        <div class="card uploader-card">
+          <div class="card-head">
+            <div>
+              <h3>Upload Log File</h3>
+              <p class="card-sub">CSV with columns: timestamp, source_ip, event_type, username, status</p>
+            </div>
+          </div>
+
+          <label class="dropzone" id="dropzone">
+            <input type="file" id="fileInput" accept=".csv" hidden />
+            <div class="dropzone-glow"></div>
+            <div class="dz-icon"><i data-lucide="file-up"></i></div>
+            <div class="dz-title">Drop CSV here or click to browse</div>
+            <div class="dz-sub">Max 16 MB · UTF-8 · headers case-insensitive</div>
+          </label>
+
+          <div class="uploader-actions">
+            <button class="btn ghost" id="downloadTemplate">
+              <i data-lucide="download"></i> Template
+            </button>
+            <button class="btn primary" id="loadSampleBtn">
+              <i data-lucide="flask-conical"></i> Load Sample Dataset
+            </button>
+          </div>
+
+          <div class="run-stats" id="runStats" style="display:none;">
+            <div class="rs-item"><span class="rs-label">Total</span><span class="rs-val" id="rsTotal">0</span></div>
+            <div class="rs-item"><span class="rs-label">Valid</span><span class="rs-val ok" id="rsValid">0</span></div>
+            <div class="rs-item"><span class="rs-label">Invalid</span><span class="rs-val warn" id="rsInvalid">0</span></div>
+            <div class="rs-item"><span class="rs-label">Suspicious</span><span class="rs-val danger" id="rsSuspicious">0</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div>
+              <h3>Processing Status</h3>
+              <p class="card-sub">Live pipeline feedback</p>
+            </div>
+          </div>
+          <div class="pipeline" id="pipeline">
+            <div class="pipe-step" data-step="1"><span class="dot"></span><span>Upload received</span></div>
+            <div class="pipe-step" data-step="2"><span class="dot"></span><span>CSV parsed & validated</span></div>
+            <div class="pipe-step" data-step="3"><span class="dot"></span><span>Detection rules applied</span></div>
+            <div class="pipe-step" data-step="4"><span class="dot"></span><span>Results persisted to SQLite</span></div>
+          </div>
+          <div class="pipeline-note" id="pipelineNote">Awaiting input…</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3>Analyzed Log Events</h3>
+            <p class="card-sub" id="logCountLabel">0 records</p>
+          </div>
+          <div class="filters">
+            <div class="search">
+              <i data-lucide="search"></i>
+              <input type="text" id="logSearch" placeholder="Search IP, user, event…" />
+            </div>
+            <select id="logSeverity" class="select">
+              <option value="All">All Severities</option>
+              <option>Critical</option><option>High</option><option>Medium</option><option>Low</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Timestamp</th><th>Source IP</th><th>User</th><th>Event Type</th>
+                <th>Status</th><th>Severity</th><th>Detection Reason</th>
+              </tr>
+            </thead>
+            <tbody id="logsBody">
+              <tr class="empty-row"><td colspan="7">No events yet. Upload a CSV or load the sample dataset.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pager">
+          <button class="btn ghost sm" id="prevPage"><i data-lucide="chevron-left"></i> Prev</button>
+          <span id="pageInfo">Page 1</span>
+          <button class="btn ghost sm" id="nextPage">Next <i data-lucide="chevron-right"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= THREATS ================= -->
+    <section class="view" id="view-threats">
+      <div class="card">
+        <div class="card-head">
+          <div>
+            <h3>Detected Threats</h3>
+            <p class="card-sub" id="threatCountLabel">0 findings</p>
+          </div>
+          <div class="filters">
+            <div class="search">
+              <i data-lucide="search"></i>
+              <input type="text" id="threatSearch" placeholder="Search IP, rule, evidence…" />
+            </div>
+            <select id="threatSeverity" class="select">
+              <option value="All">All Severities</option>
+              <option>Critical</option><option>High</option><option>Medium</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="rules-legend">
+          <div class="rule-chip critical"><i data-lucide="repeat"></i> Rule 1 · Repeated Failed Logins</div>
+          <div class="rule-chip high"><i data-lucide="ban"></i> Rule 2 · Suspicious Access</div>
+          <div class="rule-chip medium"><i data-lucide="log-in"></i> Rule 3 · Unusual Login Activity</div>
+        </div>
+
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th><th>Timestamp</th><th>Source IP</th><th>Rule Triggered</th>
+                <th>Severity</th><th>Evidence</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="threatsBody">
+              <tr class="empty-row"><td colspan="7">No threats detected yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SETTINGS ================= -->
+    <section class="view" id="view-settings">
+      <div class="card coming-soon">
+        <div class="cs-glow"></div>
+        <i data-lucide="construction"></i>
+        <h2>Settings & Intro</h2>
+        <p>Configuration options for detection thresholds, notification channels, and data retention will be available in a future release.</p>
+        <div style="margin-top: 24px;">
+          <button class="btn primary" id="replayIntroBtn">
+            <i data-lucide="play-circle"></i> Replay Landing Intro & Team Animation
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- toast -->
+<div class="toast-stack" id="toastStack"></div>
+
+<!-- loading overlay -->
+<div class="loader-overlay" id="loaderOverlay">
+  <div class="loader">
+    <div class="loader-ring"></div>
+    <div class="loader-ring delay"></div>
+    <div class="loader-label">Analyzing…</div>
+  </div>
+</div>
+
+<!-- custom cyber cursor -->
+<div class="cyber-cursor" id="cyberCursor"></div>
+<div class="cyber-cursor-ring" id="cyberCursorRing"></div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>
