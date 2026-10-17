@@ -567,7 +567,7 @@ function initLandingIntro() {
   if (replayBtn) {
     replayBtn.addEventListener('click', () => {
       showIntro();
-      toast('info', 'Intro Replayed', 'Playing landing video and team animation.');
+      toast('info', 'Intro Replayed', 'Playing The Three Bugs animation.');
     });
   }
 }

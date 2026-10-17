@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ShadowTrace — Security Operations Console</title>
+<title>ShadowTrace — The Three Bugs Security Console</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
-<link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/three_bugs.css') }}" />
+<link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='logo.jpeg') }}" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
@@ -17,17 +18,34 @@
 <!-- landing intro overlay -->
 <div class="landing-intro" id="landingIntroOverlay">
   <div class="landing-video-wrap">
-    <video id="landingVideo" autoplay muted playsinline src="{{ url_for('static', filename='landing video.mp4') }}"></video>
+    <video id="landingVideo" autoplay loop muted playsinline src="{{ url_for('static', filename='3Bugs.mp4') }}"></video>
   </div>
   <div class="landing-content">
-    <div class="landing-logo-wrap" style="width: 88px; height: 88px; border-radius: 20px; overflow: hidden; box-shadow: 0 0 30px rgba(34,211,238,0.6); border: 2px solid rgba(34,211,238,0.5); margin-bottom: 4px;">
-      <img src="{{ url_for('static', filename='logo.png') }}" alt="ShadowTrace Logo" style="width: 100%; height: 100%; object-fit: cover;" />
+    <div class="landing-logo-wrap" style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 35px rgba(34,211,238,0.7), 0 0 60px rgba(139,92,246,0.5); border: 2.5px solid rgba(34,211,238,0.7); margin-bottom: 6px;">
+      <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="The Three Bugs Logo" style="width: 100%; height: 100%; object-fit: cover;" />
     </div>
     <div class="landing-badge">
-      <i data-lucide="shield-check" style="width:14px;height:14px;"></i> Security Operations Console
+      <i data-lucide="shield-check" style="width:14px;height:14px;"></i> The Three Bugs · Security Operations Console
     </div>
-    <h1 class="team-animation-title">GhosT'ers</h1>
+    <h1 class="team-animation-title">The Three Bugs</h1>
     <div class="team-subtitle">Elite Cybersecurity & Threat Intelligence</div>
+    <div class="landing-characters-row">
+      <div class="landing-char-card">
+        <img src="{{ url_for('static', filename='images/bug_specs.png') }}" alt="Bit" class="landing-char-img" />
+        <span class="landing-char-name">Bit</span>
+        <span class="landing-char-desc">Lead Analyst</span>
+      </div>
+      <div class="landing-char-card">
+        <img src="{{ url_for('static', filename='images/bug_hacker.png') }}" alt="Glitch" class="landing-char-img" />
+        <span class="landing-char-name">Glitch</span>
+        <span class="landing-char-desc">Exploit Hunter</span>
+      </div>
+      <div class="landing-char-card">
+        <img src="{{ url_for('static', filename='images/bug_detective.png') }}" alt="Cipher" class="landing-char-img" />
+        <span class="landing-char-name">Cipher</span>
+        <span class="landing-char-desc">Threat Intel</span>
+      </div>
+    </div>
     <button class="landing-enter-btn" id="landingEnterBtn">
       <span>Enter Console</span>
       <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
@@ -51,12 +69,12 @@
   <!-- ============ SIDEBAR ============ -->
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-mark" style="background: none; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 16px rgba(34,211,238,0.4);">
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;" />
+      <div class="brand-mark video-active" style="background: none; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 18px rgba(34,211,238,0.5); border: 1.5px solid rgba(34,211,238,0.6);" title="The Three Bugs">
+        <video class="brand-mark-video" autoplay loop muted playsinline src="{{ url_for('static', filename='3Bugs.mp4') }}"></video>
       </div>
       <div class="brand-text">
         <div class="brand-name">Shadow<span>Trace</span></div>
-        <div class="brand-sub">Security Console</div>
+        <div class="brand-sub">The Three Bugs</div>
       </div>
     </div>
 
@@ -88,7 +106,7 @@
         <span class="status-dot"></span>
         <span id="engineStatus">Engine Idle</span>
       </div>
-      <div class="version">v0.1 · Prototype</div>
+      <div class="version">v0.1 · The Three Bugs</div>
     </div>
   </aside>
 
@@ -113,8 +131,8 @@
         <button class="icon-btn" id="refreshBtn" title="Refresh">
           <i data-lucide="refresh-cw"></i>
         </button>
-        <div class="avatar" style="overflow: hidden; padding: 0;">
-          <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" style="width: 100%; height: 100%; object-fit: cover;" />
+        <div class="avatar" style="overflow: hidden; padding: 0; border: 1.5px solid rgba(34,211,238,0.5); box-shadow: 0 0 12px rgba(34,211,238,0.35);" title="The Three Bugs">
+          <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="The Three Bugs Logo" style="width: 100%; height: 100%; object-fit: cover;" />
         </div>
       </div>
     </header>
@@ -400,7 +418,7 @@
         <p>Configuration options for detection thresholds, notification channels, and data retention will be available in a future release.</p>
         <div style="margin-top: 24px;">
           <button class="btn primary" id="replayIntroBtn">
-            <i data-lucide="play-circle"></i> Replay Landing Intro & Team Animation
+            <i data-lucide="play-circle"></i> Replay The Three Bugs Intro & Animation
           </button>
         </div>
       </div>
@@ -425,5 +443,6 @@
 <div class="cyber-cursor" id="cyberCursor"></div>
 
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/three_bugs.js') }}"></script>
 </body>
 </html>
