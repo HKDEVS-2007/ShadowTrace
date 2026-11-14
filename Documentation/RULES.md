@@ -1,295 +1,794 @@
-# ShadowTrace Team Rules
+# SHADOWTRACE — UNIVERSAL DEVELOPMENT RULES
+**Version:** 2.0  
+**Applies To:** All Team Members, Developers and AI Coding Assistants  
+**Project:** ShadowTrace
 
-## 1. Non-Negotiable Project Rules
+---
 
-1. Use only the agreed technology stack: HTML5, CSS3, Vanilla JavaScript, Python, Flask and SQLite.
-2. Do not introduce React, Vue, Angular, Node.js backend, ORM or a second database without unanimous team approval.
-3. Preserve the accepted prototype and the Three Bugs visual identity and animations.
-4. Read `ARCHITECTURE.md`, `DESIGN.md` and your assigned PRD before coding.
-5. No module is complete until it is integrated, tested and reviewed.
-6. Follow the existing project structure. Do not rebuild or restructure the application without team approval.
+# 1. Purpose and Authority
 
-## 2. Team Ownership
+This document defines the mandatory rules for developing, modifying, testing and integrating ShadowTrace.
 
-Each member is responsible for developing, testing and maintaining their assigned modules.
+Every team member and AI coding assistant must follow these rules.
 
-### Member 1
-- Dashboard & Analytics
-- Investigation Management
+The shared project documents have the following purposes:
 
-### Member 2
-- Evidence Management & CSV Import
-- Log Analyzer & Event Explorer
+1. **Architecture:** Defines how the application is structured and how its components communicate.
+2. **Memory:** Provides shared project context, confirmed decisions, feature ownership and current understanding.
+3. **Universal Rules:** Defines mandatory development practices and restrictions.
+4. **Member PRD + TASKS:** Defines individual responsibilities, requirements and acceptance criteria.
 
-### Member 3
-- Threat Detection Engine
-- Findings & Reports
+If a proposed change conflicts with an approved shared decision, do not implement it independently. Raise the conflict for team review.
 
-### Shared Responsibilities
+---
 
-The following files and components are shared resources:
+# 2. Repository Inspection Rules
 
-- Main HTML template and application shell.
-- Base CSS and global JavaScript.
-- Flask application entry point.
-- Database schema and shared database helper.
-- Shared API contracts and response formats.
-- Common UI components and design tokens.
+Before modifying any existing code:
 
-**Rule:** No member should independently modify shared resources without coordinating with the other members.
+1. Inspect the repository structure.
+2. Read the relevant source files.
+3. Understand existing functions, routes and dependencies.
+4. Identify related frontend and backend integrations.
+5. Check whether the required functionality already exists.
+6. Identify possible impacts on other members' features.
+7. Make the smallest appropriate change.
 
-Each member must understand the API endpoints, database tables and data structures consumed by their modules.
+Never assume that a file, function, endpoint, database table or CSS class exists simply because it is mentioned in a planning document.
 
-## 3. Git Branching Strategy
+The actual repository is the implementation source of truth.
 
-### 3.1 Main Branch
+**Forbidden:**
+- Replacing files without inspecting them.
+- Rewriting working functionality unnecessarily.
+- Creating duplicate functions or endpoints.
+- Removing existing features to simplify development.
+- Changing unrelated code during a feature implementation.
+- Inventing a folder structure without checking the current project.
 
-`main` is the stable and integrated version of ShadowTrace.
+---
 
-Rules:
-- Never develop features directly on `main`.
-- Never commit directly to `main`.
-- All changes must go through Pull Requests.
-- Only tested and reviewed changes can be merged.
-- Keep `main` runnable and stable.
+# 3. UI/UX Preservation Rules
 
-### 3.2 Permanent Feature Branches
+The existing ShadowTrace interface is an approved product baseline.
 
-Create the following six feature branches from `main`:
+Its dashboard, application shell, landing experience and Three Bugs animation system must remain intact.
 
-| Branch Name | Owner | Module |
+## 3.1 Protected Assets
+
+Do not independently remove, rename, replace or rewrite:
+
+- `index.html`
+- `static/css/style.css`
+- `static/css/three_bugs.css`
+- `static/js/app.js`
+- `static/js/three_bugs.js`
+- `static/3Bugs.mp4`
+- `static/logo.jpeg`
+- Existing character images.
+- Existing dashboard components.
+- Existing global background and motion effects.
+
+These files may require coordinated additions or carefully scoped modifications to support new features, but they must not be redesigned or replaced without explicit approval.
+
+## 3.2 Existing Design Identity
+
+All new modules must follow the existing:
+
+- Color system.
+- Typography.
+- Spacing.
+- Card design.
+- Borders and shadows.
+- Glow effects.
+- Button styles.
+- Input styles.
+- Navigation structure.
+- Transitions and animation intensity.
+
+Use the actual existing CSS tokens and components.
+
+Do not invent a new visual system.
+
+## 3.3 Three Bugs Animation Rules
+
+The Three Bugs system is part of the ShadowTrace product identity.
+
+- Preserve Bit, Glitch and Cipher.
+- Preserve the existing introduction video.
+- Preserve the existing animation integration.
+- Preserve existing background effects.
+- Do not restart the full introduction on every page navigation.
+- Keep the replay-intro functionality working.
+- Do not introduce competing animation libraries without approval.
+
+**No team member may independently modify the global UI or Three Bugs animation behavior.**
+
+Any necessary changes require team approval, impact review and testing.
+
+---
+
+# 4. Feature Ownership Rules
+
+There are four members and eight core features.
+
+Each member owns exactly two features.
+
+| Member | Feature 1 | Feature 2 |
 |---|---|---|
-| `feature/member-1-dashboard` | Member 1 | Dashboard & Analytics |
-| `feature/member-1-investigations` | Member 1 | Investigation Management |
-| `feature/member-2-evidence` | Member 2 | Evidence Management |
-| `feature/member-2-csv-import` | Member 2 | CSV Import, Log Analyzer & Event Explorer |
-| `feature/member-3-detection` | Member 3 | Threat Detection Engine |
-| `feature/member-3-reports` | Member 3 | Findings & Reports |
+| Member 1 | Investigation Management | Evidence Upload & Integrity |
+| Member 2 | CSV Validation & Normalization | Event Explorer & Timeline |
+| Member 3 | Rule-Based Detection Engine | Findings Management |
+| Member 4 | Investigation Reports & Export | Audit Trail & Activity History |
 
-Each branch has one focused module responsibility.
+## Ownership Requirements
 
-A member may work on their two branches separately. Do not mix unrelated module changes in one feature branch or Pull Request.
+- Each member is responsible for implementing and testing their assigned features.
+- Members must understand the shared Architecture.
+- Members must coordinate with dependent feature owners.
+- Members must not independently change another member's implementation.
+- Shared components must remain consistent.
+- Integration problems must be discussed before changing another member's code.
 
-### 3.3 Temporary Fix Branches
+Feature ownership does not mean that a member can independently redesign shared architecture or modify the entire application.
 
-Use `fix/` branches only when correcting an existing bug.
+---
 
-Naming format:
+# 5. Git and Branching Rules
 
-`fix/short-description`
+## 5.1 Branch Structure
 
-Examples:
-- `fix/dashboard-refresh`
-- `fix/csv-validation`
-- `fix/login-error`
-- `fix/chart-rendering`
+Use:
 
-These are temporary branches. After the fix is reviewed and merged, they can be deleted.
+- `main` — stable release branch.
+- `develop` — integration branch.
+- Feature branches — individual development work.
 
-### 3.4 Documentation Branches
+Suggested branches:
 
-Use `docs/` branches for documentation-only changes.
+- `feature/member-1-investigations`
+- `feature/member-1-evidence`
+- `feature/member-2-csv-processing`
+- `feature/member-2-event-explorer`
+- `feature/member-3-detection`
+- `feature/member-3-findings`
+- `feature/member-4-reports`
+- `feature/member-4-audit`
 
-Naming format:
+## 5.2 Development Workflow
 
-`docs/topic`
+Every member must follow this process:
 
-Examples:
-- `docs/api-documentation`
-- `docs/setup-guide`
-- `docs/database-schema`
-- `docs/github-workflow`
+1. Pull the latest approved `develop` changes.
+2. Create or update the assigned feature branch.
+3. Implement only the assigned work.
+4. Test the implementation.
+5. Review the changes before committing.
+6. Commit with a meaningful message.
+7. Push the feature branch.
+8. Open a pull request into `develop`.
+9. Resolve review feedback.
+10. Merge only after approval.
 
-These branches are also temporary and should be deleted after merging.
+`main` must not receive unreviewed feature development.
 
-### 3.5 Branch Creation Commands
-
-Create a feature branch from the latest `main`:
-
-```bash
-git switch main
-git pull origin main
-git switch -c feature/member-1-dashboard
-```
-
-Publish it to GitHub:
-
-```bash
-git push -u origin feature/member-1-dashboard
-```
-
-Replace the branch name with the assigned module branch.
-
-### 3.6 Daily Development Workflow
-
-Before starting work:
-
-```bash
-git switch main
-git pull origin main
-git switch feature/member-1-dashboard
-```
-
-Before committing:
-
-```bash
-git status
-git add .
-git commit -m "feat: implement dashboard analytics"
-git push
-```
+## 5.3 Commit Message Examples
 
 Use meaningful commit messages:
 
-- `feat:` New functionality.
-- `fix:` Bug correction.
-- `docs:` Documentation update.
-- `style:` UI or CSS improvements.
-- `refactor:` Internal code improvements.
-- `test:` Test additions or updates.
+- `feat: add investigation creation`
+- `feat: implement evidence hash verification`
+- `feat: normalize imported CSV events`
+- `feat: add chronological event explorer`
+- `feat: implement failed login detection`
+- `feat: add findings status management`
+- `feat: generate investigation reports`
+- `feat: record investigation activity`
+- `fix: handle invalid CSV timestamps`
+- `fix: prevent duplicate analysis findings`
+- `test: add evidence upload validation tests`
+- `docs: update API documentation`
 
-### 3.7 Pull Request Workflow
+Avoid vague messages such as:
 
-When a module is ready:
+- `update`
+- `changes`
+- `final`
+- `new code`
+- `fixed everything`
 
-1. Push the latest changes to its feature branch.
-2. Open a Pull Request on GitHub.
-3. Select `main` as the target branch.
-4. Describe the purpose and functionality of the changes.
-5. List modified files and test results.
-6. Include screenshots for UI changes.
-7. Mention API or database schema changes.
-8. Request review from another team member.
-9. Resolve feedback and merge after approval.
-10. Delete the temporary branch after successful merging, if it is no longer needed.
+---
 
-**Important:** Pull the latest `main` and coordinate integration before merging. Resolve conflicts with the owner of the affected files. Never overwrite another member's changes blindly.
+# 6. Shared File Modification Rules
 
-## 4. Code Standards
+The following files or components are shared and require coordination:
 
-### Python
-- Use meaningful `snake_case` names.
-- Keep functions small and focused.
-- Separate business logic into service modules instead of placing everything in Flask routes.
-- Use parameterized SQL queries.
-- Handle exceptions properly.
+- `app.py`
+- Database initialization and schema files.
+- Shared service registration.
+- Main HTML template.
+- Global CSS.
+- Global JavaScript.
+- Shared navigation.
+- Shared API utilities.
+- Existing animation files.
+- Configuration and dependency files.
 
-### JavaScript
-- Use `const` and `let`.
-- Use meaningful variable and function names.
-- Prefer `async/await` for asynchronous operations.
-- Use a centralized API helper where practical.
-- Avoid unnecessary inline event handlers unless required by the existing architecture.
+Before changing a shared file:
 
-### CSS
-- Reuse existing design tokens and component classes.
-- Avoid global selectors that can break other modules.
-- Namespace module-specific styles.
-- Preserve existing animations and visual consistency.
+1. Identify why the change is necessary.
+2. Identify which members or features depend on it.
+3. Inform the relevant team members.
+4. Agree on the change.
+5. Implement the smallest scoped modification.
+6. Test all affected functionality.
+7. Document the change.
 
-### HTML
-- Use semantic HTML elements.
-- Include accessible labels and meaningful alternative text.
-- Use correct button types.
-- Support keyboard navigation and visible focus states.
+Do not allow multiple members to independently rewrite the same shared file.
 
-### General
-- Do not duplicate existing database helpers, parsers, API wrappers or design tokens.
-- Follow the existing naming conventions and folder structure.
+---
 
-## 5. Security and Data Handling
+# 7. Backend Development Rules
 
-1. Use fictional or explicitly authorized sample logs only.
-2. Never commit secrets, API keys, passwords, personal data, real organization logs or live production database files.
-3. Validate all input on the server.
-4. Use parameterized SQL queries.
-5. Enable SQLite foreign-key constraints.
-6. Enforce upload extensions and file-size limits on the server.
-7. Treat CSV fields as untrusted text.
-8. Escape displayed output and protect CSV exports against formula injection.
-9. Never expose stack traces, absolute paths or internal exception details to users.
-10. Never execute uploaded files. ShadowTrace processes CSV files as data only.
-11. Alerts are investigative leads for analyst review, not proof of compromise.
+## 7.1 Technology
 
-## 6. API and Database Rules
+Use the approved backend stack:
 
-1. Agree on request and response structures before parallel implementation.
-2. Use the shared JSON response format:
+- Python.
+- Flask.
+- SQLite.
 
-Success:
+Do not introduce another backend framework or database without approval.
 
-```json
-{
-  "ok": true,
-  "data": {}
-}
-```
+## 7.2 Layer Separation
 
-Error:
+Follow the approved architecture:
 
-```json
-{
-  "ok": false,
-  "error": {
-    "message": "A descriptive error message"
-  }
-}
-```
+**Browser UI → Flask Routes/Controllers → Services → Database Helper/Repository → SQLite**
 
-3. Use appropriate HTTP status codes.
-4. Validate resource ownership. For example, an event or evidence file must belong to the requested investigation.
-5. Database schema changes require:
-   - A Pull Request.
-   - A migration plan.
-   - Agreement from all three members.
-6. Never silently rename or delete existing API routes or database columns.
-7. Preserve compatibility or update all affected consumers in one coordinated change.
+Routes should:
 
-## 7. UI and Animation Rules
+- Receive requests.
+- Validate request boundaries.
+- Verify IDs and relationships.
+- Call relevant services.
+- Return consistent responses.
 
-The accepted prototype is the single source of truth for the application's visual design.
+Services should:
 
-Preserve:
+- Contain business logic.
+- Handle processing and detection operations.
+- Remain testable.
+- Avoid unnecessary dependencies on Flask request globals.
 
-- Landing intro and Three Bugs branding.
-- Bit, Glitch and Cipher characters.
-- Background canvas, grid, glow orbs and scanline.
-- Video branding and sidebar design.
-- Existing cards, tables and navigation.
-- Loader and toast behavior.
-- Custom cursor behavior.
-- Existing transitions and animations.
+Database helpers/repositories should:
 
-Additional rules:
+- Manage database access.
+- Use parameterized queries.
+- Handle transactions appropriately.
+- Maintain relationships and constraints.
 
-1. New module screens must fit the existing application shell.
-2. Reuse existing components and CSS tokens.
-3. Motion must be smooth, purposeful and restrained.
-4. Respect `prefers-reduced-motion`.
-5. Do not introduce competing animation libraries or unnecessary animation loops.
-6. Support keyboard navigation and touch interaction.
-7. Do not make information unreadable through excessive glow, blur or motion.
-8. Any major visual redesign requires team approval.
+**Forbidden:**
+- Large business algorithms inside route functions.
+- Scattered raw SQL throughout route handlers.
+- Duplicated business logic.
+- Unnecessary circular imports.
+- Services that depend directly on Flask request globals.
 
-## 8. Definition of Done
+---
 
-A module is considered complete only when:
+# 8. Database Rules
 
-- Its assigned PRD acceptance criteria are satisfied.
-- It works with the latest integrated `main`.
-- It follows the agreed architecture and design.
-- Normal, invalid, empty and boundary cases have been tested.
-- Loading, empty, error and success states are implemented.
-- No browser console errors or unhandled Flask errors remain.
-- API and database integration work correctly.
-- Relevant documentation and setup instructions are updated.
-- The Pull Request has been reviewed and merged.
-- No unresolved merge conflicts remain.
+SQLite is the approved database.
 
-## 9. Final Team Agreement
+Every member must follow these requirements:
 
-All three members must follow these rules throughout ShadowTrace development.
+1. Inspect the current schema before proposing changes.
+2. Preserve existing data.
+3. Use parameterized SQL queries.
+4. Enable and respect foreign-key constraints.
+5. Use transactions for related multi-step operations.
+6. Validate relationships between records.
+7. Add indexes when justified by query patterns.
+8. Store timestamps consistently in UTC ISO-8601 format.
+9. Avoid unnecessary duplicate fields.
+10. Coordinate schema changes with the team.
 
-No member should independently change the agreed technology stack, shared architecture, database schema, API contract or core visual identity.
+## Database Migration Restrictions
 
-**Our goal is one integrated, consistent and reliable ShadowTrace application — not three separate projects combined at the end.**
+No member may independently:
+
+- Drop existing tables.
+- Recreate the database to resolve a minor issue.
+- Delete existing records to make a feature work.
+- Rename shared columns without approval.
+- Introduce incompatible schema changes.
+- Change database initialization in a way that breaks another feature.
+
+All shared schema changes must be reviewed and tested against the existing database.
+
+---
+
+# 9. API Development Rules
+
+All APIs must follow one consistent response structure.
+
+## 9.1 Success Response
+
+    {
+      "ok": true,
+      "data": {
+        "item": {}
+      }
+    }
+
+## 9.2 Error Response
+
+    {
+      "ok": false,
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "A readable explanation",
+        "details": {}
+      }
+    }
+
+## 9.3 HTTP Status Codes
+
+Use appropriate status codes:
+
+- `200` — Successful request.
+- `201` — Resource created.
+- `400` — Invalid request.
+- `404` — Resource not found.
+- `409` — Conflict.
+- `413` — Payload too large.
+- `415` — Unsupported file type.
+- `422` — Unprocessable input.
+- `500` — Unexpected server error.
+
+## 9.4 API Restrictions
+
+- Do not create duplicate endpoints.
+- Do not change existing endpoint behavior without coordination.
+- Do not return inconsistent response formats.
+- Do not expose internal filesystem paths.
+- Do not expose unnecessary sensitive information.
+- Validate IDs before database operations.
+- Verify that child resources belong to the requested investigation.
+- Keep API documentation updated when contracts change.
+
+---
+
+# 10. Evidence Upload and Integrity Rules
+
+Evidence handling is a core ShadowTrace capability.
+
+Every implementation must follow these rules:
+
+1. Accept CSV files only.
+2. Enforce the 16 MB upload limit on the backend.
+3. Keep frontend and backend size limits consistent.
+4. Validate the file extension and actual content/readability.
+5. Reject empty or invalid files appropriately.
+6. Calculate SHA-256 from the original uploaded bytes.
+7. Calculate the hash before normalization or transformation.
+8. Generate safe server-side filenames.
+9. Never use user-provided filenames directly as storage paths.
+10. Store uploaded files outside public frontend directories.
+11. Never execute uploaded files.
+12. Avoid exposing absolute storage paths.
+13. Handle database and file-storage failures safely.
+14. Keep original evidence separate from derived records.
+
+A matching hash confirms that compared bytes match the recorded hash reference. It does not prove who created the file, where it originated or whether it is legally authentic.
+
+Do not make stronger integrity claims in the UI or reports.
+
+---
+
+# 11. CSV Processing Rules
+
+CSV processing must be predictable and explainable.
+
+The initial documented required columns are:
+
+- `timestamp`
+- `username`
+- `source_ip`
+- `event_type`
+- `status`
+
+Requirements:
+
+- Normalize header case and surrounding whitespace.
+- Check required columns before processing.
+- Handle malformed rows safely.
+- Parse timestamps consistently.
+- Document timezone assumptions.
+- Convert valid timestamps to UTC.
+- Track invalid records with row numbers and reasons.
+- Handle duplicates transparently.
+- Preserve original evidence.
+- Maintain investigation and evidence relationships.
+- Generate accurate processing summaries.
+
+Processing must not silently discard records without reporting the reason.
+
+A malformed row must not unnecessarily crash the entire application.
+
+---
+
+# 12. Detection Engine Rules
+
+The initial detection engine is deterministic and rule-based.
+
+Approved initial detection concepts:
+
+1. Repeated failed login attempts for the same username and source IP within five minutes.
+2. Successful login following repeated failures within the documented correlation window.
+3. Sensitive file access following a matching suspicious login sequence, when required fields exist.
+
+Requirements:
+
+- Keep rules centralized.
+- Give each rule a stable identifier.
+- Document its conditions.
+- Document required event fields.
+- Record supporting event references.
+- Record analysis-run information.
+- Use consistent severity values.
+- Handle missing fields transparently.
+- Prevent uncontrolled duplicate findings.
+- Keep detection behavior testable and explainable.
+
+Findings must be presented as suspicious patterns or investigative leads.
+
+Never claim that a detection rule has conclusively established a breach.
+
+---
+
+# 13. Findings Management Rules
+
+Every finding must maintain its relationship with its analysis run and supporting events.
+
+Initial statuses:
+
+- New
+- Under Review
+- Resolved
+- False Positive
+
+Initial severity levels:
+
+- Low
+- Medium
+- High
+
+Requirements:
+
+- Validate status changes.
+- Preserve finding explanations.
+- Support analyst notes.
+- Display supporting event references.
+- Keep findings associated with the correct investigation.
+- Record important status changes through audit integration.
+- Avoid silently overwriting investigation history.
+
+---
+
+# 14. Reporting and Export Rules
+
+Reports must be generated using saved application data.
+
+A report may include:
+
+- Investigation information.
+- Evidence metadata.
+- SHA-256 hashes.
+- CSV processing summary.
+- Event summary.
+- Analysis run information.
+- Detection summary.
+- Findings.
+- Supporting event references.
+- Report generation timestamp.
+
+Requirements:
+
+- Scope reports to the selected investigation.
+- Distinguish original evidence metadata from derived analysis results.
+- Do not invent missing values.
+- Do not describe findings as confirmed breaches.
+- Ensure exported data matches the selected investigation.
+- Use consistent and readable column headings.
+- Handle empty datasets appropriately.
+
+---
+
+# 15. Audit Trail Rules
+
+The audit trail should record important application activities, including:
+
+- Investigation created.
+- Investigation updated.
+- Evidence uploaded.
+- Processing completed.
+- Analysis executed.
+- Finding status changed.
+- Report generated.
+
+Where applicable, record:
+
+- Activity ID.
+- Investigation ID.
+- Action type.
+- Description.
+- Timestamp.
+- Related record reference.
+
+Audit history must be useful and readable.
+
+The application-level audit trail must not be described as cryptographically immutable or tamper-proof unless such guarantees are separately implemented and verified.
+
+---
+
+# 16. Frontend Development Rules
+
+Use:
+
+- HTML5.
+- CSS3.
+- Vanilla JavaScript.
+
+All new modules must integrate with the existing ShadowTrace application shell.
+
+Requirements:
+
+- Reuse existing design patterns.
+- Keep page navigation consistent.
+- Use existing typography and color tokens.
+- Follow established card and table styles.
+- Keep interactions responsive.
+- Avoid unnecessary external dependencies.
+- Maintain readable JavaScript.
+- Handle loading, empty, success and error states.
+- Prevent accidental duplicate submissions.
+- Preserve user input when a recoverable request fails.
+- Display backend errors in a readable way.
+
+Do not add a separate frontend framework without approval.
+
+Do not build a second application shell for a new module.
+
+---
+
+# 17. Security Rules
+
+Security must be considered in every feature.
+
+Mandatory practices:
+
+- Validate user input on the backend.
+- Use parameterized SQL.
+- Escape untrusted content before rendering.
+- Avoid unsafe `innerHTML` for imported log data.
+- Never trust uploaded filenames.
+- Never execute uploaded files.
+- Restrict accepted file formats.
+- Enforce file size limits server-side.
+- Keep evidence outside public directories.
+- Avoid exposing internal server paths.
+- Avoid logging secrets or sensitive evidence content unnecessarily.
+- Keep credentials and secrets out of Git.
+- Use fictional or authorized datasets only.
+
+Never test against systems or datasets without appropriate authorization.
+
+---
+
+# 18. Error Handling and Application States
+
+Every new module must handle:
+
+1. Loading state.
+2. Successful state.
+3. Empty state.
+4. Validation error.
+5. Missing resource.
+6. Server error.
+7. Recoverable failure.
+
+Requirements:
+
+- Display readable messages.
+- Avoid exposing stack traces to normal users.
+- Log useful technical details for development.
+- Prevent duplicate requests where appropriate.
+- Do not silently ignore errors.
+- Do not leave the UI in a misleading success state after a failed request.
+
+---
+
+# 19. Code Quality Rules
+
+All team members must write code that is:
+
+- Readable.
+- Consistent.
+- Maintainable.
+- Modular.
+- Properly named.
+- Appropriately commented.
+- Testable.
+
+Avoid:
+
+- Unnecessary code duplication.
+- Extremely large functions.
+- Unexplained hardcoded values.
+- Unused dependencies.
+- Unused variables.
+- Dead code.
+- Unnecessary refactoring.
+- Hidden side effects.
+- Catch-all error handling that hides real failures.
+
+Comments should explain important reasoning, not repeat obvious code statements.
+
+---
+
+# 20. AI Coding Assistant Rules
+
+AI assistants must follow all shared project documents.
+
+Before generating or editing code, an AI assistant must:
+
+1. Read the current Memory.
+2. Read the approved Architecture.
+3. Read Universal Rules.
+4. Read the assigned member's PRD and TASKS.
+5. Inspect the actual repository.
+6. Identify existing implementation.
+7. Confirm the assigned feature scope.
+8. Identify shared-file dependencies.
+
+AI assistants must not:
+
+- Invent existing functions or routes.
+- Assume a database schema without inspection.
+- Replace the confirmed technology stack.
+- Redesign the existing dashboard.
+- Remove Three Bugs assets.
+- Rewrite working files unnecessarily.
+- Implement another member's feature without coordination.
+- Claim tests passed when they were not run.
+- Claim a feature is complete when only its UI exists.
+- Silently change approved architecture.
+
+When a required file or repository detail is unavailable, clearly identify what needs verification rather than inventing an answer.
+
+AI-generated code must be reviewed, tested and integrated like any other contribution.
+
+---
+
+# 21. Testing Rules
+
+Each feature must be tested independently and in integration with its dependencies.
+
+Minimum testing categories:
+
+- Normal successful workflow.
+- Invalid input.
+- Missing input.
+- Empty dataset.
+- Missing resource.
+- Incorrect relationships.
+- Database failure.
+- File-processing failure where applicable.
+- Duplicate operation.
+- Frontend loading and error states.
+- Existing application regression checks.
+
+Use synthetic CSV datasets for development and demonstrations.
+
+Do not use real sensitive evidence in the repository.
+
+After modifying shared code, verify that existing functionality still works.
+
+---
+
+# 22. Documentation Rules
+
+When a feature or shared implementation changes, update the relevant documentation.
+
+Documentation should cover:
+
+- Feature purpose.
+- API endpoints.
+- Request and response formats.
+- Database changes.
+- Important validation rules.
+- Error behavior.
+- Testing performed.
+- Known limitations.
+
+Update Memory when an approved project decision materially changes.
+
+Update Architecture when the system structure or integration contract changes.
+
+Do not allow outdated documentation to remain presented as the current implementation.
+
+---
+
+# 23. Definition of Done
+
+A feature is complete only when all applicable requirements below are satisfied:
+
+- [ ] The assigned functionality is implemented.
+- [ ] The implementation follows the approved Architecture.
+- [ ] The actual database structure is compatible.
+- [ ] API contracts are consistent.
+- [ ] Input validation is implemented.
+- [ ] Error handling is implemented.
+- [ ] Frontend states are handled.
+- [ ] Existing UI/UX is preserved.
+- [ ] Three Bugs integration remains intact.
+- [ ] Normal and invalid cases are tested.
+- [ ] Dependent features are checked.
+- [ ] Documentation is updated.
+- [ ] Changes are committed to the correct branch.
+- [ ] Pull request is reviewed and approved.
+- [ ] No unrelated existing functionality is broken.
+
+A frontend screen without working backend integration is not a completed feature.
+
+A backend endpoint without validation and testing is not a completed feature.
+
+A successful local test without integration checks is not sufficient for final completion.
+
+---
+
+# 24. Forbidden Development Practices
+
+The following are prohibited without explicit approval:
+
+1. Replacing the existing frontend framework.
+2. Replacing Flask or SQLite.
+3. Redesigning the dashboard.
+4. Removing or replacing the Three Bugs animation system.
+5. Deleting existing project assets.
+6. Rebuilding the application from scratch.
+7. Dropping or resetting the existing database.
+8. Modifying shared architecture independently.
+9. Changing another member's assigned feature without coordination.
+10. Adding unnecessary libraries or services.
+11. Committing secrets or real sensitive evidence.
+12. Making unsupported claims about detections or evidence authenticity.
+13. Merging untested changes directly into `main`.
+14. Claiming completion without satisfying acceptance criteria.
+
+---
+
+# 25. Final Team Agreement
+
+Every team member and AI coding assistant must follow this shared principle:
+
+**Build on the existing ShadowTrace project. Do not replace its identity, architecture or working functionality unnecessarily.**
+
+The team is responsible for delivering:
+
+- One integrated application.
+- One consistent frontend.
+- One Flask backend.
+- One SQLite database.
+- One agreed API contract.
+- One preserved Three Bugs visual identity.
+- Eight integrated core features.
+- Four clearly assigned feature owners.
+- Consistent testing and documentation.
+- A stable, demonstrable project.
+
+**Feature development must extend ShadowTrace, not fragment it into separate implementations.**
+
+These Universal Rules remain applicable throughout the project unless the team formally approves and documents a revision.
